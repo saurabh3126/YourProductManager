@@ -1,14 +1,15 @@
 import { Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { ComponentType, ReactNode } from 'react'
 import { 
   ArrowRight, UserCheck, Star, Brain, Cpu, TrendingUp, 
   Award, CheckCircle, Quote, Clock, User, Phone, Briefcase,
-  ChevronRight, Shield, ChevronDown, Compass, MessageSquare,
+  ChevronLeft, ChevronRight, Shield, ChevronDown, Compass, MessageSquare,
   Layout, Zap, Target, Mic2
 } from 'lucide-react'
 import { CountUp } from '../components/animations/CountUp'
+import RotatingText from '../components/animations/RotatingText'
 import { VideoPreviewSection } from '../components/sections/VideoPreviewSection'
 import { JobTitlesSection } from '../components/sections/JobTitlesSection'
 import { TestimonialsSection } from '../components/sections/TestimonialsSection'
@@ -33,6 +34,16 @@ const CAREER_GAP_OTHER_COUNTRIES: Array<{
   { country: 'Australia', target: 'A$140K+', flag: '🇦🇺', verb: 'Access', noun: 'Careers' },
   { country: 'United Arab Emirates (Dubai)', target: 'AED 300K+', flag: '🇦🇪', verb: 'Secure', noun: 'Roles' },
 ]
+
+const COUNTRY_SHORT_LABELS: Record<string, string> = {
+  'United States': 'US',
+  'United Kingdom': 'UK',
+  Germany: 'Germany',
+  Canada: 'Canada',
+  Singapore: 'Singapore',
+  Australia: 'Australia',
+  'United Arab Emirates (Dubai)': 'UAE',
+}
 
 type StatItem = {
   value?: number
@@ -327,6 +338,34 @@ function FlagIcon({
   )
 }
 
+function AnimatedTarget({
+  target,
+  duration = 1.0,
+  className,
+}: {
+  target: string
+  duration?: number
+  className?: string
+}) {
+  const parts = target.match(/^([^\d]*)(\d+)(.*)$/)
+
+  if (!parts) {
+    return <span className={className}>{target}</span>
+  }
+
+  const [, prefix, numberValue, suffix] = parts
+
+  return (
+    <CountUp
+      end={Number(numberValue)}
+      prefix={prefix}
+      suffix={suffix}
+      duration={duration}
+      className={className}
+    />
+  )
+}
+
 // FAQ Item with animated chevron
 function FAQItem({ faq, index }: { faq: { q: string; a: string }; index: number }) {
   const [isOpen, setIsOpen] = useState(false)
@@ -370,8 +409,70 @@ function FAQItem({ faq, index }: { faq: { q: string; a: string }; index: number 
 }
 
 export default function Home() {
+  const rotatingCountryCards = CAREER_GAP_HERO.slice(2)
+  const [activeCountryCardIndex, setActiveCountryCardIndex] = useState(0)
+  const [cardTransitionDirection, setCardTransitionDirection] = useState<1 | -1>(1)
+  const [isManualControlActive, setIsManualControlActive] = useState(false)
+  const [manualInteractionNonce, setManualInteractionNonce] = useState(0)
+
+  const switchCountryCard = (direction: 1 | -1, isManual = false) => {
+    if (isManual) {
+      setIsManualControlActive(true)
+      setManualInteractionNonce((prev) => prev + 1)
+    }
+
+    setCardTransitionDirection(direction)
+    setActiveCountryCardIndex((prev) =>
+      direction === 1
+        ? (prev + 1) % rotatingCountryCards.length
+        : prev === 0
+          ? rotatingCountryCards.length - 1
+          : prev - 1
+    )
+  }
+
+  useEffect(() => {
+    if (rotatingCountryCards.length <= 1 || isManualControlActive) return
+
+    const intervalId = window.setInterval(() => {
+      switchCountryCard(1)
+    }, 4500)
+
+    return () => window.clearInterval(intervalId)
+  }, [rotatingCountryCards.length, isManualControlActive])
+
+  useEffect(() => {
+    if (!isManualControlActive) return
+
+    const resumeTimerId = window.setTimeout(() => {
+      setIsManualControlActive(false)
+    }, 6000)
+
+    return () => window.clearTimeout(resumeTimerId)
+  }, [isManualControlActive, manualInteractionNonce])
+
+  const activeCountryCard = rotatingCountryCards[activeCountryCardIndex]
+  const getCountryCardAtOffset = (offset: number) =>
+    rotatingCountryCards[
+      (activeCountryCardIndex + offset + rotatingCountryCards.length * 4) %
+        rotatingCountryCards.length
+    ]
+
+  const previousCountryCard = getCountryCardAtOffset(-1)
+  const previousCountryCardFar = getCountryCardAtOffset(-2)
+  const nextCountryCard = getCountryCardAtOffset(1)
+  const nextCountryCardFar = getCountryCardAtOffset(2)
+
+  const goToPreviousCountryCard = () => {
+    switchCountryCard(-1, true)
+  }
+
+  const goToNextCountryCard = () => {
+    switchCountryCard(1, true)
+  }
+
   return (
-    <div className="relative overflow-x-hidden">
+    <div className="relative overflow-x-hidden rounded-all-divs">
       {/* Background orbs - CSS only, no JS */}
       <div className="orb orb-1" />
       <div className="orb orb-2" />
@@ -387,7 +488,22 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              Think Like a Product Manager
+              <span className="inline-flex flex-wrap items-end gap-x-3 gap-y-2">
+                <span>Think Like a</span>
+                <RotatingText
+                  texts={['Product', 'Manager']}
+                  mainClassName="overflow-hidden min-w-[8ch] text-pink-300"
+                  staggerFrom="last"
+                  initial={{ y: '100%' }}
+                  animate={{ y: 0 }}
+                  exit={{ y: '-120%' }}
+                  staggerDuration={0.02}
+                  splitLevelClassName="overflow-hidden"
+                  elementLevelClassName="rotating-gradient-text"
+                  transition={{ type: 'spring', damping: 30, stiffness: 400 }}
+                  rotationInterval={2200}
+                />
+              </span>
             </motion.h1>
 
             <motion.p 
@@ -407,41 +523,146 @@ export default function Home() {
               transition={{ delay: 0.5, duration: 0.6 }}
             >
               {CAREER_GAP_HERO.slice(0, 2).map((item) => (
-                <div key={item.country} className="glass-card p-6 border-white/5 bg-white/3 min-h-35 flex flex-col justify-between">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
+                <div
+                  key={item.country}
+                  className="relative rounded-3xl border border-purple-500/45 bg-black px-6 py-5 min-h-35 overflow-hidden transition-all duration-300 hover:border-purple-400 hover:shadow-[0_12px_36px_-18px_rgba(168,85,247,0.75)]"
+                >
+                  <div className="relative flex flex-col gap-3">
+                    <div className="flex items-center gap-3 text-white/90">
                       <FlagIcon emoji={item.flag} alt={item.country} className="w-6 h-6 rounded-full" />
-                      <span className="font-bold text-lg">{item.country}</span>
+                      <span className="font-['Montserrat'] font-bold text-base md:text-lg tracking-wide uppercase">
+                        {item.country}
+                      </span>
                     </div>
-                    <ArrowRight size={18} className="-rotate-45 text-muted-foreground/50" />
-                  </div>
-                  <div>
-                    <div className="text-3xl font-extrabold text-[#FBBF24] mb-1 leading-none">{item.target}</div>
-                    <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold opacity-70">Unlock high-value positions</div>
+
+                    <div className="text-[clamp(1.9rem,3.2vw,2.5rem)] font-['Montserrat'] font-black text-[#FBBF24] leading-none uppercase">
+                      <AnimatedTarget target={item.target} duration={1.0} />
+                    </div>
+
+                    <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold opacity-80">
+                      Unlock high-value positions
+                    </div>
                   </div>
                 </div>
               ))}
 
-              <div className="col-span-2 glass-card p-8 bg-white/2 border-white/5 mt-2">
-                <div className="grid grid-cols-2 gap-x-12 gap-y-8">
-                  {CAREER_GAP_HERO.slice(2).map((item) => (
-                    <div key={item.country} className="flex flex-col gap-1.5">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2.5">
-                          <FlagIcon emoji={item.flag} alt={item.country} className="w-5 h-5" />
-                          <span className="font-bold text-sm tracking-tight">{item.country}</span>
-                        </div>
-                        <TrendIcon type={item.trend} />
-                      </div>
-                      <div className="text-xs">
-                        <span className="text-muted-foreground/80 mr-1.5 font-medium">Bridge the Gap to</span>
-                        <span className="text-[#FBBF24] font-bold">{item.target}</span>
-                        <span className="text-muted-foreground/80 ml-1.5 font-medium">Careers</span>
-                      </div>
-                      <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold opacity-50">Unlock high-value positions</div>
-                    </div>
-                  ))}
+              <div className="col-span-2 mt-2 relative mx-auto w-full max-w-85 overflow-visible">
+                <div className="pointer-events-none absolute top-0 left-[-58%] z-0 w-full aspect-square rounded-2xl border border-white/10 bg-[#121a2f]/28 p-6 flex flex-col justify-center opacity-35 scale-90 overflow-hidden backdrop-blur-xl">
+                  <div className="absolute inset-0 bg-linear-to-br from-white/14 via-transparent to-transparent" />
+                  <div className="absolute -top-2 right-12 h-[120%] w-14 rotate-12 bg-white/8 blur-xl" />
+                  <div className="relative mx-auto h-3 w-40 rounded-full bg-white/12" />
+                  <div className="relative mt-4 mx-auto h-2 w-28 rounded-full bg-[#FBBF24]/35" />
+                  <div className="relative mt-2 mx-auto h-2 w-20 rounded-full bg-white/10" />
                 </div>
+
+                <div className="pointer-events-none absolute top-0 left-[-38%] z-10 w-full aspect-square rounded-2xl border border-white/12 bg-[#121a2f]/35 p-6 flex flex-col justify-center opacity-55 scale-95 overflow-hidden backdrop-blur-xl">
+                  <div className="absolute inset-0 bg-linear-to-br from-white/16 via-transparent to-transparent" />
+                  <div className="absolute -top-2 right-12 h-[120%] w-16 rotate-12 bg-white/10 blur-xl" />
+                  <div className="relative text-center overflow-hidden">
+                    <div className="text-[11px] uppercase tracking-[0.22em] font-['Montserrat'] font-bold text-white/85 truncate">
+                      {previousCountryCard.country}
+                    </div>
+                    <div className="mt-2 text-2xl leading-none uppercase tracking-tight font-['Montserrat'] font-black text-[#FBBF24] truncate">
+                      {previousCountryCard.target} openings
+                    </div>
+                    <div className="mt-2 text-[10px] text-muted-foreground/85 truncate">
+                      Connect with {previousCountryCard.target} high-growth careers
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pointer-events-none absolute top-0 right-[-38%] z-10 w-full aspect-square rounded-2xl border border-white/12 bg-[#121a2f]/35 p-6 flex flex-col justify-center opacity-55 scale-95 overflow-hidden backdrop-blur-xl">
+                  <div className="absolute inset-0 bg-linear-to-bl from-white/16 via-transparent to-transparent" />
+                  <div className="absolute -top-2 left-12 h-[120%] w-16 -rotate-12 bg-white/10 blur-xl" />
+                  <div className="relative text-center overflow-hidden">
+                    <div className="text-[11px] uppercase tracking-[0.22em] font-['Montserrat'] font-bold text-white/85 truncate">
+                      {nextCountryCard.country}
+                    </div>
+                    <div className="mt-2 text-2xl leading-none uppercase tracking-tight font-['Montserrat'] font-black text-[#FBBF24] truncate">
+                      {nextCountryCard.target} openings
+                    </div>
+                    <div className="mt-2 text-[10px] text-muted-foreground/85 truncate">
+                      Connect with {nextCountryCard.target} high-growth careers
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pointer-events-none absolute top-0 right-[-58%] z-0 w-full aspect-square rounded-2xl border border-white/10 bg-[#121a2f]/28 p-6 flex flex-col justify-center opacity-35 scale-90 overflow-hidden backdrop-blur-xl">
+                  <div className="absolute inset-0 bg-linear-to-bl from-white/14 via-transparent to-transparent" />
+                  <div className="absolute -top-2 left-12 h-[120%] w-14 -rotate-12 bg-white/8 blur-xl" />
+                  <div className="relative mx-auto h-3 w-40 rounded-full bg-white/12" />
+                  <div className="relative mt-4 mx-auto h-2 w-28 rounded-full bg-[#FBBF24]/35" />
+                  <div className="relative mt-2 mx-auto h-2 w-20 rounded-full bg-white/10" />
+                </div>
+
+                <button
+                  type="button"
+                  onClick={goToPreviousCountryCard}
+                  aria-label="Previous country"
+                  className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 z-40 h-12 w-12 rounded-full border border-white/15 bg-black text-white/80 hover:bg-[#121212] transition-colors shadow-[0_8px_20px_rgba(0,0,0,0.35)] flex items-center justify-center"
+                >
+                  <ChevronLeft size={18} />
+                </button>
+
+                <div className="relative z-30 w-full aspect-square">
+                  <AnimatePresence mode="sync" initial={false}>
+                    <motion.div
+                      custom={cardTransitionDirection}
+                      key={activeCountryCard.country}
+                      className="absolute inset-0 rounded-2xl border border-purple-500/45 bg-black p-6 flex flex-col justify-center overflow-hidden"
+                      initial={(direction) => ({
+                        opacity: 0,
+                        x: direction === 1 ? 120 : -120,
+                        y: direction === 1 ? -30 : 30,
+                        rotate: direction === 1 ? 6 : -6,
+                        scale: 0.92,
+                        filter: 'blur(2px)',
+                      })}
+                      animate={{ opacity: 1, x: 0, y: 0, rotate: 0, scale: 1, filter: 'blur(0px)' }}
+                      exit={(direction) => ({
+                        opacity: 0,
+                        x: direction === 1 ? -120 : 120,
+                        y: direction === 1 ? 30 : -30,
+                        rotate: direction === 1 ? -6 : 6,
+                        scale: 0.92,
+                        filter: 'blur(2px)',
+                      })}
+                      transition={{
+                        type: 'spring',
+                        stiffness: 180,
+                        damping: 24,
+                        mass: 0.9,
+                      }}
+                      style={{ willChange: 'transform, opacity' }}
+                    >
+                    <div className="relative z-10 flex items-center justify-center gap-3">
+                      <FlagIcon emoji={activeCountryCard.flag} alt={activeCountryCard.country} className="w-8 h-8" />
+                      <span className="font-['Montserrat'] font-extrabold text-[clamp(1.35rem,2.4vw,1.8rem)] tracking-[0.05em] uppercase">
+                        {activeCountryCard.country}
+                      </span>
+                    </div>
+
+                    <div className="relative z-10 mt-5 text-center">
+                      <div className="text-[clamp(1.55rem,3.2vw,2.15rem)] leading-none uppercase tracking-tight font-['Montserrat'] font-black text-[#FBBF24]">
+                        {activeCountryCard.target} premium openings
+                      </div>
+                    </div>
+
+                    <div className="relative z-10 mt-3 text-center text-[clamp(0.75rem,1.35vw,0.95rem)] text-white/85 font-medium">
+                      Connect with {activeCountryCard.target} High-Growth Careers
+                    </div>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={goToNextCountryCard}
+                  aria-label="Next country"
+                  className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 z-40 h-12 w-12 rounded-full border border-white/15 bg-black text-white/80 hover:bg-[#121212] transition-colors shadow-[0_8px_20px_rgba(0,0,0,0.35)] flex items-center justify-center"
+                >
+                  <ChevronRight size={18} />
+                </button>
               </div>
             </motion.div>
           </div>
@@ -449,18 +670,22 @@ export default function Home() {
           {/* Right Column: Lead Capture Form */}
           <div className="w-full">
             <motion.div
-              className="relative p-px rounded-[2rem] bg-linear-to-b from-white/10 to-transparent"
+              className="relative rounded-3xl border border-white/25 bg-[#0d1221]/85 overflow-hidden shadow-[0_12px_40px_rgba(0,0,0,0.4)]"
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
               variants={fadeIn}
               transition={{ duration: 0.6 }}
             >
-              <div className="glass-card p-8 md:p-9 border-0 bg-[#12121e] rounded-[calc(2rem-1px)] relative overflow-hidden">
+              <div className="absolute inset-1 rounded-4xl border border-white/12 pointer-events-none" />
+              <div className="absolute inset-0 bg-linear-to-br from-white/16 via-transparent to-transparent pointer-events-none" />
+              <div className="absolute -top-8 right-12 h-[170%] w-16 rotate-12 bg-white/10 blur-xl pointer-events-none" />
+
+              <div className="relative p-8 md:p-9">
                 <div className="absolute top-0 right-0 w-40 h-40 bg-primary/10 blur-[80px] rounded-full -translate-y-1/2 translate-x-1/2" />
                 
                 <h3 className="text-2xl font-bold text-center mb-2 tracking-tight">
-                  <span className="text-[#8b5cf6] underline decoration-2 underline-offset-8">Start Your PM Journey</span>
+                  <span className="text-[#8b5cf6] font-['Montserrat'] font-extrabold uppercase tracking-wide">Start Your PM Journey</span>
                 </h3>
                 <p className="text-muted-foreground text-center text-[13px] mb-8 leading-relaxed opacity-80">
                   Get personalized guidance for your transition<br />into product management
@@ -517,24 +742,47 @@ export default function Home() {
             </motion.div>
 
             <div className="mt-6 grid grid-cols-2 gap-4">
-              <div className="glass-card p-6 border-white/5 bg-[#12121e] flex flex-col justify-between group">
-                <div>
-                  <div className="text-3xl font-extrabold text-[#FBBF24] tracking-tight">300+</div>
-                  <div className="text-[11px] text-muted-foreground uppercase tracking-widest mt-1.5 font-bold opacity-60">Product Leaders</div>
+              <div className="relative rounded-3xl border border-purple-500/45 bg-black px-6 py-6 flex flex-col justify-between overflow-hidden">
+
+                <div className="relative z-10">
+                  <div className="text-3xl font-['Montserrat'] font-black text-[#FBBF24] tracking-tight leading-none">
+                    <CountUp end={300} suffix="+" duration={1.0} />
+                  </div>
+                  <div className="text-[11px] text-muted-foreground uppercase tracking-widest mt-1.5 font-semibold opacity-80">Product Leaders</div>
                 </div>
-                <div className="mt-4 opacity-30 group-hover:opacity-60 transition-opacity">
-                  <Award size={28} className="text-[#8b5cf6] ml-auto" />
+                <div className="relative z-10 mt-4 opacity-55 transition-opacity">
+                  <Award size={26} className="text-[#8b5cf6] ml-auto" />
                 </div>
               </div>
-              <div className="glass-card p-6 border-white/5 bg-[#12121e] flex flex-col justify-between group">
-                <div>
-                  <div className="text-3xl font-extrabold text-[#FBBF24] tracking-tight">7+</div>
-                  <div className="text-[11px] text-muted-foreground uppercase tracking-widest mt-1.5 font-bold opacity-60 italic">Countries</div>
-                  
-                  {/* Small Circle Flags Removed */}
+              <div
+                className="relative rounded-3xl border border-purple-500/45 bg-black px-6 py-6 overflow-hidden flex flex-col justify-center"
+              >
+                <div className="relative z-10 text-left mb-4">
+                  <div className="text-3xl font-['Montserrat'] font-black text-[#FBBF24] tracking-tight leading-none">
+                    <CountUp end={7} suffix="+" duration={1.0} />
+                  </div>
+                  <div className="text-[11px] text-muted-foreground uppercase tracking-widest mt-1 font-semibold opacity-80">
+                    Countries
+                  </div>
                 </div>
-                <div className="mt-4 opacity-30 group-hover:opacity-60 transition-opacity">
-                  <TrendingUp size={28} className="text-[#8b5cf6] ml-auto" />
+
+                <div className="relative z-10 w-full py-2 bg-transparent flag-marquee-viewport">
+                  <div className="flag-marquee-track">
+                    {[0, 1].map((groupIndex) => (
+                      <div className="flag-marquee-group" key={groupIndex} aria-hidden={groupIndex === 1}>
+                        {CAREER_GAP_OTHER_COUNTRIES.map((c) => (
+                          <div key={`${groupIndex}-${c.country}`} className="flex flex-col items-center gap-1 shrink-0 mr-3" title={c.country}>
+                            <span className="h-8 w-8 rounded-full border border-[#FBBF24]/90 flex items-center justify-center">
+                              <FlagIcon emoji={c.flag} alt={`${c.country} flag`} className="h-5 w-5 rounded-full" />
+                            </span>
+                            <span className="text-[8px] leading-none font-bold tracking-wide text-muted-foreground/90 whitespace-nowrap">
+                              {COUNTRY_SHORT_LABELS[c.country]}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>

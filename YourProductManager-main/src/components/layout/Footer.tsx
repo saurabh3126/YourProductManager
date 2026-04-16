@@ -85,7 +85,7 @@ export function Footer() {
             <h4 className="text-base font-bold">Contact Us</h4>
             <Link
               to="/coaching"
-              className="mt-1 inline-flex items-center justify-center gap-3 h-8 px-4 rounded-lg bg-primary text-primary-foreground font-bold hover:opacity-90 transition-opacity w-full"
+              className="btn-purple-animated mt-1 inline-flex items-center justify-center gap-3 h-8 px-4 rounded-lg text-primary-foreground font-bold hover:opacity-90 transition-opacity w-full"
             >
               <Phone size={16} />
               Schedule a Call

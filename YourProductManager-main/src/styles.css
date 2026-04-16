@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@600;700;800;900&display=swap');
 
 @plugin 'tailwindcss-animate';
 @import "tailwindcss";
@@ -42,6 +42,10 @@ body {
   overflow-x: hidden;
   line-height: 1.6;
   min-height: 100vh;
+}
+
+.rounded-all-divs div {
+  border-radius: 1rem;
 }
 
 /* ═══════════════ BACKGROUND ORBS (CSS-only, GPU accelerated) ═══════════════ */
@@ -404,9 +408,9 @@ h1, h2, h3, h4, h5, h6 { line-height: 1.2; }
 .bg-primary\/30 { background-color: rgba(139, 92, 246, 0.3) !important; }
 .bg-primary\/5 { background-color: rgba(139, 92, 246, 0.05) !important; }
 .bg-accent\/5 { background-color: rgba(251, 191, 36, 0.05) !important; }
-.bg-white\/10 { background-color: rgba(255, 255, 255, 0.1) !important; }
-.bg-white\/5 { background-color: rgba(255, 255, 255, 0.05) !important; }
-.group:hover .group-hover\:bg-white\/10 { background-color: rgba(255, 255, 255, 0.1) !important; }
+.bg-white\/10 { background-color: rgba(0, 0, 0, 0.9) !important; }
+.bg-white\/5 { background-color: rgba(0, 0, 0, 0.82) !important; }
+.group:hover .group-hover\:bg-white\/10 { background-color: rgba(0, 0, 0, 0.94) !important; }
 .bg-black { background-color: #000000 !important; }
 .bg-black\/60 { background-color: rgba(0, 0, 0, 0.6) !important; }
 .bg-black\/80 { background-color: rgba(0, 0, 0, 0.8) !important; }
@@ -422,19 +426,30 @@ h1, h2, h3, h4, h5, h6 { line-height: 1.2; }
 
 /* ═══════════════ GLASS CARD ═══════════════ */
 .glass-card {
-  background: rgba(26, 26, 46, 0.6) !important;
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: #000000 !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  border: 1px solid rgba(139, 92, 246, 0.28) !important;
   border-radius: 1rem !important;
   transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
   transform: translateZ(0); /* GPU acceleration */
+  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(139, 92, 246, 0.12) inset;
 }
 
 .glass-card:hover {
-  background: rgba(26, 26, 46, 0.8) !important;
-  border-color: rgba(139, 92, 246, 0.3) !important;
-  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.15);
+  background: #000000 !important;
+  border-color: rgba(139, 92, 246, 0.5) !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.55), 0 0 26px rgba(139, 92, 246, 0.24);
+}
+
+/* Neutralize matte white gradient overlays used across cards */
+[class*='from-white/'],
+[class*='to-white/'],
+[class*='hover:from-white/'],
+[class*='hover:to-white/'] {
+  --tw-gradient-from: transparent !important;
+  --tw-gradient-via: transparent !important;
+  --tw-gradient-to: transparent !important;
 }
 
 /* Emoji / flag rendering (Windows-friendly) */
@@ -449,7 +464,9 @@ h1, h2, h3, h4, h5, h6 { line-height: 1.2; }
   align-items: center !important;
   justify-content: center !important;
   gap: 0.5rem;
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-glow) 100%) !important;
+  background: linear-gradient(120deg, #5b21b6 0%, #6d28d9 45%, #7c3aed 70%, #5b21b6 100%) !important;
+  background-size: 240% 240% !important;
+  animation: purple-gradient-flow 14s linear infinite;
   color: var(--color-primary-foreground) !important;
   font-weight: 600 !important;
   padding: 0.875rem 1.75rem !important;
@@ -459,6 +476,96 @@ h1, h2, h3, h4, h5, h6 { line-height: 1.2; }
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none !important;
   white-space: nowrap;
+}
+
+@keyframes purple-gradient-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.btn-purple-animated {
+  background: linear-gradient(120deg, #5b21b6 0%, #6d28d9 45%, #7c3aed 70%, #5b21b6 100%) !important;
+  background-size: 240% 240% !important;
+  animation: purple-gradient-flow 14s linear infinite;
+  color: #ffffff !important;
+}
+
+.btn-purple-pink-animated {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(circle at 18% 24%, rgba(244, 114, 182, 0.3) 0%, rgba(244, 114, 182, 0) 40%),
+    radial-gradient(circle at 78% 72%, rgba(192, 132, 252, 0.28) 0%, rgba(192, 132, 252, 0) 46%),
+    linear-gradient(125deg, #3b0f82 0%, #5b21b6 34%, #7e22ce 54%, #ec4899 66%, #4c1d95 100%) !important;
+  background-size: 180% 180%, 165% 165%, 220% 220% !important;
+  animation: purple-pink-blend 8s ease-in-out infinite !important;
+  will-change: background-position, background-size;
+  color: #ffffff !important;
+}
+
+.btn-purple-pink-animated::before {
+  content: '';
+  position: absolute;
+  inset: -18%;
+  z-index: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(circle at 24% 36%, rgba(236, 72, 153, 0.5) 0%, rgba(236, 72, 153, 0) 36%),
+    radial-gradient(circle at 70% 54%, rgba(217, 70, 239, 0.38) 0%, rgba(217, 70, 239, 0) 44%),
+    radial-gradient(circle at 46% 78%, rgba(168, 85, 247, 0.26) 0%, rgba(168, 85, 247, 0) 48%);
+  filter: blur(10px);
+  opacity: 0.86;
+  mix-blend-mode: screen;
+  animation: purple-pink-cloud 6s linear infinite;
+}
+
+.btn-purple-pink-animated > * {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes purple-pink-blend {
+  0% {
+    background-position: 12% 26%, 84% 72%, 0% 50%;
+    background-size: 176% 176%, 160% 160%, 220% 220%;
+  }
+  23% {
+    background-position: 74% 20%, 22% 84%, 48% 64%;
+    background-size: 190% 190%, 172% 172%, 232% 232%;
+  }
+  51% {
+    background-position: 34% 82%, 88% 28%, 96% 38%;
+    background-size: 184% 184%, 168% 168%, 214% 214%;
+  }
+  77% {
+    background-position: 90% 58%, 12% 18%, 44% 84%;
+    background-size: 194% 194%, 176% 176%, 236% 236%;
+  }
+  100% {
+    background-position: 18% 26%, 76% 72%, 0% 50%;
+    background-size: 180% 180%, 165% 165%, 220% 220%;
+  }
+}
+
+@keyframes purple-pink-cloud {
+  0% {
+    transform: translate3d(-24%, -4%, 0) scale(1);
+    opacity: 0.64;
+  }
+  25% {
+    transform: translate3d(-8%, 3%, 0) scale(1.06);
+    opacity: 0.84;
+  }
+  55% {
+    transform: translate3d(8%, -1%, 0) scale(1.03);
+    opacity: 0.79;
+  }
+  100% {
+    transform: translate3d(26%, 4%, 0) scale(1.07);
+    opacity: 0.74;
+  }
 }
 
 /* ═══════════════ PILLS (3D) ═══════════════ */
@@ -512,6 +619,14 @@ h1, h2, h3, h4, h5, h6 { line-height: 1.2; }
 .btn-primary:hover {
   box-shadow: 0 0 30px rgba(139, 92, 246, 0.5);
   transform: translateY(-2px);
+}
+
+.btn-purple-animated:hover {
+  box-shadow: 0 0 30px rgba(139, 92, 246, 0.5);
+}
+
+.btn-purple-pink-animated:hover {
+  box-shadow: 0 0 34px rgba(168, 85, 247, 0.55);
 }
 
 /* Smaller variant (for compact CTAs) */
@@ -947,8 +1062,17 @@ input::placeholder {
 .blur-3xl { filter: blur(64px) !important; }
 .blur-xl { filter: blur(24px) !important; }
 .backdrop-blur-md { 
-  backdrop-filter: blur(12px) !important; 
-  -webkit-backdrop-filter: blur(12px) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+.backdrop-blur,
+.backdrop-blur-sm,
+.backdrop-blur-lg,
+.backdrop-blur-xl,
+.backdrop-blur-2xl,
+.backdrop-blur-3xl {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 .origin-left { transform-origin: left !important; }
 .overflow-hidden { overflow: hidden !important; }
@@ -1023,6 +1147,29 @@ details summary::-webkit-details-marker {
 @keyframes pulse-glow {
   0%, 100% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.3); }
   50% { box-shadow: 0 0 40px rgba(139, 92, 246, 0.6); }
+}
+
+@keyframes flag-marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+
+.flag-marquee-viewport {
+  overflow: hidden;
+}
+
+.flag-marquee-track {
+  display: flex;
+  width: max-content;
+  align-items: flex-end;
+  will-change: transform;
+  animation: flag-marquee 14s linear infinite;
+}
+
+.flag-marquee-group {
+  display: flex;
+  align-items: flex-end;
+  flex-shrink: 0;
 }
 
 @keyframes float {
