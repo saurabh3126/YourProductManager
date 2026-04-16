@@ -3,7 +3,6 @@ import { motion } from 'framer-motion'
 import { BookOpen, ArrowRight, Calendar, Sparkles } from 'lucide-react'
 import { FadeIn } from '@/components/animations/FadeIn'
 import { GlowCard } from '@/components/animations/GlowCard'
-import { Container } from '@/components/layout/Container'
 
 const courses = [
   {

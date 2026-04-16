@@ -1,23 +1,18 @@
 import { Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
-import type { ComponentType, ReactNode } from 'react'
 import { 
   ArrowRight, UserCheck, Star, Brain, Cpu, TrendingUp, 
   Award, CheckCircle, Quote, Clock, User, Phone, Briefcase,
   ChevronLeft, ChevronRight, Shield, ChevronDown, Compass, MessageSquare,
-  Layout, Zap, Target, Mic2
+  Target, Mic2
 } from 'lucide-react'
 import { CountUp } from '../components/animations/CountUp'
 import RotatingText from '../components/animations/RotatingText'
 import { VideoPreviewSection } from '../components/sections/VideoPreviewSection'
 import { JobTitlesSection } from '../components/sections/JobTitlesSection'
-import { TestimonialsSection } from '../components/sections/TestimonialsSection'
 // @ts-ignore - JSX component without type declarations
 import CurvedLoop from '../components/CurvedLoop'
-
-// Data
-const CAREER_GAP_PRIMARY = { country: 'India', target: '₹25L+', flag: '🇮🇳' }
 
 const CAREER_GAP_OTHER_COUNTRIES: Array<{
   country: string
@@ -44,99 +39,6 @@ const COUNTRY_SHORT_LABELS: Record<string, string> = {
   Australia: 'Australia',
   'United Arab Emirates (Dubai)': 'UAE',
 }
-
-type StatItem = {
-  value?: number
-  displayValue?: string
-  prefix: string
-  suffix: string
-  label: string
-  icon: ComponentType<{ size?: number; className?: string }>
-  valueClassName?: string
-  subContent?: ReactNode
-  cardClassName?: string
-  valueSizeClassName?: string
-  labelClassName?: string
-}
-
-function HeroStatCard({ stat }: { stat: StatItem }) {
-  const Icon = stat.icon
-  const valueSizeClassName = stat.valueSizeClassName ?? 'text-2xl md:text-3xl'
-  const labelClassName = stat.labelClassName ?? 'text-xs text-muted-foreground mt-0.5'
-
-  return (
-    <div
-      className={`glass-card w-full px-4 py-3 flex items-center justify-between ${
-        stat.cardClassName ?? ''
-      }`.trim()}
-    >
-      <div>
-        <div
-          className={`${valueSizeClassName} font-bold ${
-            stat.valueClassName ?? 'text-foreground'
-          }`.trim()}
-        >
-          {stat.displayValue ? (
-            stat.displayValue
-          ) : (
-            <CountUp
-              end={stat.value ?? 0}
-              prefix={stat.prefix}
-              suffix={stat.suffix}
-              duration={1.5}
-            />
-          )}
-        </div>
-        {stat.label ? <div className={labelClassName}>{stat.label}</div> : null}
-        {stat.subContent}
-      </div>
-      <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center translate-y-3">
-        <Icon size={18} className="text-primary" />
-      </div>
-    </div>
-  )
-}
-
-const stats: StatItem[] = [
-  {
-    displayValue: '300+',
-    valueClassName: 'text-[#FFD700]',
-    valueSizeClassName: 'text-3xl md:text-4xl',
-    value: 300,
-    prefix: '',
-    suffix: '+',
-    label: 'Product Leaders Mentored Globally',
-    labelClassName: 'text-sm text-muted-foreground mt-1',
-    cardClassName: 'px-6 py-4',
-    icon: Award,
-  },
-  {
-    displayValue: '7+ Countries',
-    valueClassName: 'text-[#FFD700]',
-    value: 7,
-    prefix: '',
-    suffix: '+',
-    label: 'Global Alumni Network',
-    icon: CheckCircle,
-    subContent: (
-      <div className="mt-2 flex flex-wrap gap-1.5">
-        {CAREER_GAP_OTHER_COUNTRIES.map((c) => (
-          <span
-            key={c.country}
-            className="h-6 w-6 rounded-full overflow-hidden bg-[#FFD700]/10 border-2 border-[#FFD700]/40 flex items-center justify-center"
-            title={c.country}
-          >
-            <FlagIcon
-              emoji={c.flag}
-              alt={`${c.country} flag`}
-              className="h-full w-full object-cover scale-125"
-            />
-          </span>
-        ))}
-      </div>
-    ),
-  },
-]
 
 const features = [
   {
@@ -282,16 +184,31 @@ const CAREER_GAP_HERO = [
   { country: 'UAE', target: 'AED 300K+', flag: '🇦🇪', trend: 'line' },
 ]
 
-const TrendIcon = ({ type }: { type: string }) => {
-  switch (type) {
-    case 'up': return <ArrowRight size={14} className="-rotate-45 text-[#a78bfa]" />
-    case 'compass': return <Compass size={14} className="text-[#a78bfa]" />
-    case 'chart': return <TrendingUp size={14} className="text-[#a78bfa]" />
-    case 'up-right': return <TrendingUp size={14} className="text-[#a78bfa]" />
-    case 'wave': return <TrendingUp size={14} className="text-[#a78bfa] rotate-12" />
-    case 'line': return <TrendingUp size={14} className="text-[#a78bfa] -rotate-12" />
-    default: return null
-  }
+const countryCardVariants = {
+  enter: (direction: number) => ({
+    opacity: 0,
+    x: direction === 1 ? 120 : -120,
+    y: direction === 1 ? -30 : 30,
+    rotate: direction === 1 ? 6 : -6,
+    scale: 0.92,
+    filter: 'blur(2px)',
+  }),
+  center: {
+    opacity: 1,
+    x: 0,
+    y: 0,
+    rotate: 0,
+    scale: 1,
+    filter: 'blur(0px)',
+  },
+  exit: (direction: number) => ({
+    opacity: 0,
+    x: direction === 1 ? -120 : 120,
+    y: direction === 1 ? 30 : -30,
+    rotate: direction === 1 ? -6 : 6,
+    scale: 0.92,
+    filter: 'blur(2px)',
+  }),
 }
 
 const TWEMOJI_SVG_BASE =
@@ -459,9 +376,7 @@ export default function Home() {
     ]
 
   const previousCountryCard = getCountryCardAtOffset(-1)
-  const previousCountryCardFar = getCountryCardAtOffset(-2)
   const nextCountryCard = getCountryCardAtOffset(1)
-  const nextCountryCardFar = getCountryCardAtOffset(2)
 
   const goToPreviousCountryCard = () => {
     switchCountryCard(-1, true)
@@ -610,23 +525,10 @@ export default function Home() {
                       custom={cardTransitionDirection}
                       key={activeCountryCard.country}
                       className="absolute inset-0 rounded-2xl border border-purple-500/45 bg-black p-6 flex flex-col justify-center overflow-hidden"
-                      initial={(direction) => ({
-                        opacity: 0,
-                        x: direction === 1 ? 120 : -120,
-                        y: direction === 1 ? -30 : 30,
-                        rotate: direction === 1 ? 6 : -6,
-                        scale: 0.92,
-                        filter: 'blur(2px)',
-                      })}
-                      animate={{ opacity: 1, x: 0, y: 0, rotate: 0, scale: 1, filter: 'blur(0px)' }}
-                      exit={(direction) => ({
-                        opacity: 0,
-                        x: direction === 1 ? -120 : 120,
-                        y: direction === 1 ? 30 : -30,
-                        rotate: direction === 1 ? -6 : 6,
-                        scale: 0.92,
-                        filter: 'blur(2px)',
-                      })}
+                      variants={countryCardVariants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
                       transition={{
                         type: 'spring',
                         stiffness: 180,

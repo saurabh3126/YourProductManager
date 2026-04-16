@@ -17,6 +17,17 @@ type StaggerFrom = 'first' | 'last' | 'center' | 'random' | number
 
 type MotionState = TargetAndTransition | VariantLabels
 
+type DisallowedSpanHandlers =
+  | 'onAnimationStart'
+  | 'onAnimationEnd'
+  | 'onDrag'
+  | 'onDragStart'
+  | 'onDragEnd'
+  | 'onDragEnter'
+  | 'onDragLeave'
+  | 'onDragOver'
+  | 'onDrop'
+
 export type RotatingTextRef = {
   next: () => void
   previous: () => void
@@ -42,7 +53,7 @@ type RotatingTextProps = {
   mainClassName?: string
   splitLevelClassName?: string
   elementLevelClassName?: string
-} & Omit<HTMLAttributes<HTMLSpanElement>, 'onAnimationStart' | 'onAnimationEnd'>
+} & Omit<HTMLAttributes<HTMLSpanElement>, DisallowedSpanHandlers>
 
 function cn(...classes: Array<string | undefined | false>) {
   return classes.filter(Boolean).join(' ')
