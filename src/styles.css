@@ -93,40 +93,59 @@ body {
 ::-webkit-scrollbar-thumb { background: rgba(139, 92, 246, 0.3); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(139, 92, 246, 0.5); }
 
-/* ═══════════════ NAVBAR PILL ═══════════════ */
-.navbar-pill {
-  /* Layout Consolidation */
+/* ═══════════════ NAVBAR MODERN ═══════════════ */
+.navbar-modern {
   width: 100%;
-  max-width: 100%;
-  height: 3.25rem;
+  height: 4.25rem;
   margin: 0;
-  padding: 0 0.875rem;
-  border-radius: 1rem;
+  padding: 0 1rem;
 
   display: flex;
   align-items: center;
   justify-content: space-between;
 
-  /* Visual Styles */
-  background: rgba(26, 26, 46, 0.85);
-  border: 1px solid rgba(39, 39, 42, 0.6);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
+  background:
+    linear-gradient(90deg, rgba(9, 9, 15, 0.96) 0%, rgba(15, 15, 25, 0.95) 50%, rgba(9, 9, 15, 0.96) 100%),
+    radial-gradient(circle at 50% -120%, rgba(139, 92, 246, 0.28), transparent 58%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
 
-  /* Transitions */
-  transition: all 300ms ease-in-out;
+  transition: all 280ms ease;
 }
 
-.navbar-pill.navbar-scrolled {
-  background: rgba(26, 26, 46, 0.95);
-  border-color: rgba(39, 39, 42, 0.9);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+.navbar-modern.navbar-scrolled {
+  height: 3.9rem;
+  background:
+    linear-gradient(90deg, rgba(7, 7, 11, 0.98) 0%, rgba(12, 12, 20, 0.98) 50%, rgba(7, 7, 11, 0.98) 100%),
+    radial-gradient(circle at 50% -120%, rgba(139, 92, 246, 0.22), transparent 58%);
+  border-bottom-color: rgba(255, 255, 255, 0.17);
+  box-shadow: 0 14px 44px rgba(0, 0, 0, 0.45);
 }
 
-/* Responsive padding to match .container */
-@media (min-width: 640px) { .navbar-pill { padding-left: 1rem; padding-right: 1rem; } }
-@media (min-width: 1024px) { .navbar-pill { padding-left: 1.25rem; padding-right: 1.25rem; } }
+@media (min-width: 640px) {
+  .navbar-modern {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .navbar-modern {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
 
 .navbar-dropdown {
   background: #1a1a2e;
@@ -1152,6 +1171,120 @@ details summary::-webkit-details-marker {
 @keyframes flag-marquee {
   from { transform: translate3d(0, 0, 0); }
   to { transform: translate3d(-50%, 0, 0); }
+}
+
+@keyframes flag-token-orbit {
+  0% { transform: translate3d(0, 0, 0); }
+  25% { transform: translate3d(2px, -2px, 0); }
+  50% { transform: translate3d(0, -4px, 0); }
+  75% { transform: translate3d(-2px, -2px, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
+@keyframes countries-orbit-spin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes countries-orbit-spin-reverse {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+
+@keyframes countries-orbit-border-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.countries-orbit-center {
+  position: relative;
+  z-index: 2;
+}
+
+.countries-orbit-image {
+  width: 88px;
+  height: 88px;
+  display: block;
+  object-fit: contain;
+}
+
+.countries-orbit-badge {
+  width: 88px;
+  height: 88px;
+  box-sizing: border-box;
+  border-radius: 50%;
+  background: transparent;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  box-shadow: 0 8px 24px rgba(251, 191, 36, 0.12);
+}
+
+.countries-orbit-badge::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  padding: 3px;
+  background: conic-gradient(
+    from 0deg,
+    rgba(251, 191, 36, 0.95),
+    rgba(245, 158, 11, 0.92),
+    rgba(255, 237, 160, 0.9),
+    rgba(251, 191, 36, 0.95)
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.08);
+  animation: countries-orbit-border-spin 14s linear infinite;
+}
+
+.countries-orbit-value {
+  color: #fbbf24;
+}
+
+.countries-orbit-label {
+  color: #fbbf24;
+  font-size: 9px !important;
+  line-height: 1;
+}
+
+.countries-orbit-ring {
+  --countries-orbit-duration: 28s;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 136px;
+  height: 136px;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  will-change: transform;
+  animation: countries-orbit-spin var(--countries-orbit-duration) linear infinite;
+}
+
+.countries-orbit-item {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
+.countries-orbit-upright {
+  will-change: transform;
+  animation: countries-orbit-spin-reverse var(--countries-orbit-duration) linear infinite;
+  transform-origin: center;
+}
+
+.countries-orbit-upright img {
+  transform: rotate(180deg) !important;
+}
+
+.flag-orbit-token {
+  will-change: transform;
+  animation: flag-token-orbit 2.6s linear infinite;
 }
 
 .flag-marquee-viewport {

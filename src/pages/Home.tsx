@@ -11,6 +11,7 @@ import { CountUp } from '../components/animations/CountUp'
 import RotatingText from '../components/animations/RotatingText'
 import { VideoPreviewSection } from '../components/sections/VideoPreviewSection'
 import { JobTitlesSection } from '../components/sections/JobTitlesSection'
+import countriesBadgeImage from '../assets/Group 3.png'
 // @ts-ignore - JSX component without type declarations
 import CurvedLoop from '../components/CurvedLoop'
 
@@ -29,16 +30,6 @@ const CAREER_GAP_OTHER_COUNTRIES: Array<{
   { country: 'Australia', target: 'A$140K+', flag: '🇦🇺', verb: 'Access', noun: 'Careers' },
   { country: 'United Arab Emirates (Dubai)', target: 'AED 300K+', flag: '🇦🇪', verb: 'Secure', noun: 'Roles' },
 ]
-
-const COUNTRY_SHORT_LABELS: Record<string, string> = {
-  'United States': 'US',
-  'United Kingdom': 'UK',
-  Germany: 'Germany',
-  Canada: 'Canada',
-  Singapore: 'Singapore',
-  Australia: 'Australia',
-  'United Arab Emirates (Dubai)': 'UAE',
-}
 
 const features = [
   {
@@ -188,26 +179,17 @@ const countryCardVariants = {
   enter: (direction: number) => ({
     opacity: 0,
     x: direction === 1 ? 120 : -120,
-    y: direction === 1 ? -30 : 30,
-    rotate: direction === 1 ? 6 : -6,
-    scale: 0.92,
-    filter: 'blur(2px)',
+    scale: 0.96,
   }),
   center: {
     opacity: 1,
     x: 0,
-    y: 0,
-    rotate: 0,
     scale: 1,
-    filter: 'blur(0px)',
   },
   exit: (direction: number) => ({
     opacity: 0,
     x: direction === 1 ? -120 : 120,
-    y: direction === 1 ? 30 : -30,
-    rotate: direction === 1 ? -6 : 6,
-    scale: 0.92,
-    filter: 'blur(2px)',
+    scale: 0.96,
   }),
 }
 
@@ -462,7 +444,7 @@ export default function Home() {
               ))}
 
               <div className="col-span-2 mt-2 relative mx-auto w-full max-w-85 overflow-visible">
-                <div className="pointer-events-none absolute top-0 left-[-58%] z-0 w-full aspect-square rounded-2xl border border-white/10 bg-[#121a2f]/28 p-6 flex flex-col justify-center opacity-35 scale-90 overflow-hidden backdrop-blur-xl">
+                <div className="absolute top-0 left-[-58%] z-0 w-full aspect-square rounded-2xl border border-white/10 bg-black p-6 flex flex-col justify-center opacity-35 scale-90 overflow-hidden backdrop-blur-xl transition-all duration-300 hover:border-purple-400 hover:opacity-55 hover:shadow-[0_10px_32px_-16px_rgba(168,85,247,0.75)]">
                   <div className="absolute inset-0 bg-linear-to-br from-white/14 via-transparent to-transparent" />
                   <div className="absolute -top-2 right-12 h-[120%] w-14 rotate-12 bg-white/8 blur-xl" />
                   <div className="relative mx-auto h-3 w-40 rounded-full bg-white/12" />
@@ -470,7 +452,7 @@ export default function Home() {
                   <div className="relative mt-2 mx-auto h-2 w-20 rounded-full bg-white/10" />
                 </div>
 
-                <div className="pointer-events-none absolute top-0 left-[-38%] z-10 w-full aspect-square rounded-2xl border border-white/12 bg-[#121a2f]/35 p-6 flex flex-col justify-center opacity-55 scale-95 overflow-hidden backdrop-blur-xl">
+                <div className="absolute top-0 left-[-38%] z-10 w-full aspect-square rounded-2xl border border-purple-500/45 bg-black p-6 flex flex-col justify-center opacity-55 scale-95 overflow-hidden backdrop-blur-xl transition-all duration-300 hover:border-purple-400 hover:opacity-80 hover:shadow-[0_12px_36px_-18px_rgba(168,85,247,0.75)]">
                   <div className="absolute inset-0 bg-linear-to-br from-white/16 via-transparent to-transparent" />
                   <div className="absolute -top-2 right-12 h-[120%] w-16 rotate-12 bg-white/10 blur-xl" />
                   <div className="relative text-center overflow-hidden">
@@ -486,7 +468,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="pointer-events-none absolute top-0 right-[-38%] z-10 w-full aspect-square rounded-2xl border border-white/12 bg-[#121a2f]/35 p-6 flex flex-col justify-center opacity-55 scale-95 overflow-hidden backdrop-blur-xl">
+                <div className="pointer-events-none absolute top-0 right-[-38%] z-10 w-full aspect-square rounded-2xl border border-purple-500/45 bg-black/45 p-6 flex flex-col justify-center opacity-55 scale-95 overflow-hidden backdrop-blur-xl">
                   <div className="absolute inset-0 bg-linear-to-bl from-white/16 via-transparent to-transparent" />
                   <div className="absolute -top-2 left-12 h-[120%] w-16 -rotate-12 bg-white/10 blur-xl" />
                   <div className="relative text-center overflow-hidden">
@@ -502,7 +484,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="pointer-events-none absolute top-0 right-[-58%] z-0 w-full aspect-square rounded-2xl border border-white/10 bg-[#121a2f]/28 p-6 flex flex-col justify-center opacity-35 scale-90 overflow-hidden backdrop-blur-xl">
+                <div className="pointer-events-none absolute top-0 right-[-58%] z-0 w-full aspect-square rounded-2xl border border-white/10 bg-black/30 p-6 flex flex-col justify-center opacity-35 scale-90 overflow-hidden backdrop-blur-xl">
                   <div className="absolute inset-0 bg-linear-to-bl from-white/14 via-transparent to-transparent" />
                   <div className="absolute -top-2 left-12 h-[120%] w-14 -rotate-12 bg-white/8 blur-xl" />
                   <div className="relative mx-auto h-3 w-40 rounded-full bg-white/12" />
@@ -524,16 +506,15 @@ export default function Home() {
                     <motion.div
                       custom={cardTransitionDirection}
                       key={activeCountryCard.country}
-                      className="absolute inset-0 rounded-2xl border border-purple-500/45 bg-black p-6 flex flex-col justify-center overflow-hidden"
+                      className="absolute inset-0 rounded-2xl border border-purple-500/45 bg-black p-6 flex flex-col justify-center overflow-hidden transform-gpu"
                       variants={countryCardVariants}
                       initial="enter"
                       animate="center"
                       exit="exit"
                       transition={{
-                        type: 'spring',
-                        stiffness: 180,
-                        damping: 24,
-                        mass: 0.9,
+                        duration: 0.46,
+                        ease: [0.25, 0.8, 0.25, 1],
+                        opacity: { duration: 0.32, ease: 'linear' },
                       }}
                       style={{ willChange: 'transform, opacity' }}
                     >
@@ -572,22 +553,23 @@ export default function Home() {
           {/* Right Column: Lead Capture Form */}
           <div className="w-full">
             <motion.div
-              className="relative rounded-3xl border border-white/25 bg-[#0d1221]/85 overflow-hidden shadow-[0_12px_40px_rgba(0,0,0,0.4)]"
+              className="relative rounded-3xl border border-purple-500/45 bg-gradient-to-br from-[#18102a] via-[#0a0a14] to-[#1a1333] overflow-hidden shadow-2xl shadow-purple-900/40 ring-1 ring-purple-700/30 transition-all duration-300 hover:border-purple-400 hover:shadow-[0_20px_60px_-10px_rgba(139,92,246,0.55),0_2px_16px_0_rgba(0,0,0,0.25)] hover:ring-2 hover:ring-purple-400/40"
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
               variants={fadeIn}
               transition={{ duration: 0.6 }}
             >
-              <div className="absolute inset-1 rounded-4xl border border-white/12 pointer-events-none" />
-              <div className="absolute inset-0 bg-linear-to-br from-white/16 via-transparent to-transparent pointer-events-none" />
-              <div className="absolute -top-8 right-12 h-[170%] w-16 rotate-12 bg-white/10 blur-xl pointer-events-none" />
+              <div className="absolute inset-1 rounded-4xl border border-purple-500/20 pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-700/10 via-black/0 to-purple-900/10 pointer-events-none" />
+              <div className="absolute -top-8 right-12 h-[170%] w-16 rotate-12 bg-white/10 blur-2xl pointer-events-none" />
+              <div className="absolute -bottom-8 left-12 h-[120%] w-16 -rotate-12 bg-purple-500/10 blur-2xl pointer-events-none" />
 
               <div className="relative p-8 md:p-9">
                 <div className="absolute top-0 right-0 w-40 h-40 bg-primary/10 blur-[80px] rounded-full -translate-y-1/2 translate-x-1/2" />
                 
                 <h3 className="text-2xl font-bold text-center mb-2 tracking-tight">
-                  <span className="text-[#8b5cf6] font-['Montserrat'] font-extrabold uppercase tracking-wide">Start Your PM Journey</span>
+                  <span className="text-white font-['Montserrat'] font-extrabold uppercase tracking-wide">Start Your PM Journey</span>
                 </h3>
                 <p className="text-muted-foreground text-center text-[13px] mb-8 leading-relaxed opacity-80">
                   Get personalized guidance for your transition<br />into product management
@@ -631,11 +613,11 @@ export default function Home() {
                 </form>
 
                 <div className="mt-8 flex items-center justify-center gap-6 pt-6 border-t border-white/3">
-                  <div className="flex items-center gap-2 text-[10px] text-[#8b5cf6] font-bold uppercase tracking-widest opacity-80">
+                  <div className="flex items-center gap-2 text-[10px] text-white font-bold uppercase tracking-widest opacity-80">
                     <Shield size={12} />
                     <span>100% SECURE</span>
                   </div>
-                  <div className="flex items-center gap-2 text-[10px] text-[#8b5cf6] font-bold uppercase tracking-widest opacity-80">
+                  <div className="flex items-center gap-2 text-[10px] text-white font-bold uppercase tracking-widest opacity-80">
                     <UserCheck size={12} />
                     <span>500+ ENROLLED</span>
                   </div>
@@ -644,7 +626,7 @@ export default function Home() {
             </motion.div>
 
             <div className="mt-6 grid grid-cols-2 gap-4">
-              <div className="relative rounded-3xl border border-purple-500/45 bg-black px-6 py-6 flex flex-col justify-between overflow-hidden">
+              <div className="relative rounded-3xl border border-purple-500/45 bg-black px-6 py-6 flex flex-col items-center justify-center text-center overflow-hidden transition-all duration-300 hover:border-purple-400 hover:shadow-[0_12px_36px_-18px_rgba(168,85,247,0.75)]">
 
                 <div className="relative z-10">
                   <div className="text-3xl font-['Montserrat'] font-black text-[#FBBF24] tracking-tight leading-none">
@@ -653,37 +635,49 @@ export default function Home() {
                   <div className="text-[11px] text-muted-foreground uppercase tracking-widest mt-1.5 font-semibold opacity-80">Product Leaders</div>
                 </div>
                 <div className="relative z-10 mt-4 opacity-55 transition-opacity">
-                  <Award size={26} className="text-[#8b5cf6] ml-auto" />
+                  <Award size={26} className="text-[#8b5cf6]" />
                 </div>
               </div>
               <div
-                className="relative rounded-3xl border border-purple-500/45 bg-black px-6 py-6 overflow-hidden flex flex-col justify-center"
+                className="relative rounded-3xl border border-purple-500/45 bg-black px-6 py-6 overflow-hidden flex flex-col justify-center transition-all duration-300 hover:border-purple-400 hover:shadow-[0_12px_36px_-18px_rgba(168,85,247,0.75)]"
               >
-                <div className="relative z-10 text-left mb-4">
-                  <div className="text-3xl font-['Montserrat'] font-black text-[#FBBF24] tracking-tight leading-none">
-                    <CountUp end={7} suffix="+" duration={1.0} />
+                <div className="relative z-10 h-32 flex items-center justify-center">
+                  <div className="countries-orbit-center">
+                    <img
+                      src={countriesBadgeImage}
+                      alt="7+ Countries"
+                      className="countries-orbit-image"
+                      loading="lazy"
+                      decoding="async"
+                      draggable={false}
+                    />
                   </div>
-                  <div className="text-[11px] text-muted-foreground uppercase tracking-widest mt-1 font-semibold opacity-80">
-                    Countries
-                  </div>
-                </div>
 
-                <div className="relative z-10 w-full py-2 bg-transparent flag-marquee-viewport">
-                  <div className="flag-marquee-track">
-                    {[0, 1].map((groupIndex) => (
-                      <div className="flag-marquee-group" key={groupIndex} aria-hidden={groupIndex === 1}>
-                        {CAREER_GAP_OTHER_COUNTRIES.map((c) => (
-                          <div key={`${groupIndex}-${c.country}`} className="flex flex-col items-center gap-1 shrink-0 mr-3" title={c.country}>
-                            <span className="h-8 w-8 rounded-full border border-[#FBBF24]/90 flex items-center justify-center">
-                              <FlagIcon emoji={c.flag} alt={`${c.country} flag`} className="h-5 w-5 rounded-full" />
-                            </span>
-                            <span className="text-[8px] leading-none font-bold tracking-wide text-muted-foreground/90 whitespace-nowrap">
-                              {COUNTRY_SHORT_LABELS[c.country]}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    ))}
+                  <div className="countries-orbit-ring" aria-hidden="true">
+                    {CAREER_GAP_OTHER_COUNTRIES.map((c, index) => {
+                      const angle = (360 / CAREER_GAP_OTHER_COUNTRIES.length) * index
+                      const radius = 66
+                      const radians = ((angle - 90) * Math.PI) / 180
+                      const x = Math.cos(radians) * radius
+                      const y = Math.sin(radians) * radius
+
+                      return (
+                        <div
+                          key={c.country}
+                          className="countries-orbit-item"
+                          style={{
+                            left: `calc(50% + ${x}px)`,
+                            top: `calc(50% + ${y}px)`,
+                            transform: 'translate(-50%, -50%)',
+                          }}
+                          title={c.country}
+                        >
+                          <span className="countries-orbit-upright h-8 w-8 rounded-full border border-[#FBBF24]/90 flex items-center justify-center bg-black/80">
+                            <FlagIcon emoji={c.flag} alt={`${c.country} flag`} className="h-5 w-5 rounded-full" />
+                          </span>
+                        </div>
+                      )
+                    })}
                   </div>
                 </div>
               </div>
